@@ -61,37 +61,41 @@ END)
     return 0
 }
 
+function prog_usage
+{
+    echo "usage: regextest [-f flavor] pattern teststr"
+}
+
 function main
 {
-    declare -r USAGE="usage: regextest [-e engine] pattern teststr"
+    local OPTIND
     
     # $REGXENG is an env variable a user can set with export
-    local engine=${REGXENG:=python}
+    local flavor=${REGXENG:=python}
     
     if [ $# -eq 0 ]; then
-        echo $USAGE
+        prog_usage
         exit 1
     fi
     
-    while getopts ":e:" opt; do
-        if [ $opt = "e" ]; then
-            engine=$OPTARG
-            if [[ ! "$engine" =~ ^(bre|ere|pcre|python)$ ]]; then
-                echo $USAGE
-                echo "-error: invalid regex engine selection, (bre,ere,pcre,python; are valid)"
+    while getopts ":f:" opt; do
+        if [ $opt = "f" ]; then
+            flavor=$OPTARG
+            if [[ ! "$flavor" =~ ^(bre|ere|pcre|python)$ ]]; then
+                prog_usage
+                echo "-error: invalid regex flavor selection, (bre,ere,pcre,python; are valid)"
                 exit 1
             fi
         fi
     done
-    
     shift $(($OPTIND - 1))
     
     if [ ! $# -eq 2 ]; then
-        echo $USAGE
+        prog_usage
         exit 1
     fi
     
-    case $engine in
+    case $flavor in
         "bre"    )
             if ! regex_posix_bre "$@"; then
                 exit 1
