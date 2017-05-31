@@ -15,34 +15,33 @@ class RegexTester(object):
         self.flags = flags # for python
         self.lang = lang
     def test(self):
-        if self.lang == 'bre':
-            return self.bre()
-        if self.lang == 'ere':
-            return self.ere()
         if self.lang == 'pcre':
             return self.pcre()
         if self.lang == 'python':
             return self.python()
-    def bre(self):
-        print 'bre'
-    def ere(self):
-        print 'ere'
     def pcre(self):
         print 'pcre'
+        return True
     def python(self):
         flags = re.sub('([a-z])', r"re.\1", self.flags, flags = re.I) if self.flags else self.flags
-        match = re.match(self.expression, self.teststr, eval(flags))
-        if match is None:
-            print "match failed"
-            sys.exit()
-        i = 0
-        print "match successful, matched groups:"
-        while True:
-            try:
-                print "[%d] = %s"  % (i, match.group(i))
-            except IndexError, e:
-                break
-            i = i + 1
+        matches = re.findall(self.expression, self.teststr, eval(flags))
+        matches_len = len(matches)
+        if matches_len == 0:
+            print "Match failed!"
+            return False
+        print "Match successful! matches and their groups:"
+        for matchno, match in enumerate(matches):
+            matchno = matchno + 1
+            print 'Match number %d:' % matchno
+            if type(match) == str:
+                print 'Full match, Group[1] = \'%s\'' % match
+            else:
+                for groupno, group in enumerate(match):
+                    if groupno == 0:
+                        print 'Full match, Group[%s] = \'%s\'' % (groupno + 1, group)
+                    else:
+                        print 'Group[%s] = \'%s\'' % (groupno + 1, group)
+        return True
 
 def main():
     class arg_namespace():pass
