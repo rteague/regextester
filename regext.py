@@ -68,17 +68,16 @@ def main():
     class arg_namespace():pass
     argn = arg_namespace()
     parser = argparse.ArgumentParser(
-        description = 'A CLI tool for testing regular expressions (regex) using various regex langs (bre, ere, pcre, etc.).',
+        description = 'A CLI tool for testing regular expressions (regex) using various regex languages.',
         epilog = 'by Rashaud Teague'
     )
     parser.add_argument('-l', '--lang', nargs = '?', default = 'pcre')
-    parser.add_argument('-m', '--flags', nargs = '?', default = '0', help = '-m I or --flags="I|S|U"')
+    parser.add_argument('-f', '--flags', nargs = '?', default = '0', help = '-f I or --flags="I|S|U"')
     parser.add_argument('-e', '--expression', nargs = 1, type = str, required = True)
-    parser.add_argument('files', nargs = '*')
     parser.parse_args(namespace = argn)
     # process
-    # take stdin or look for files in the cli arguments--after the --expression arg
-    data = raw_input() if len(argn.files) == 0 else self.files 
+    # read from stdin
+    data = raw_input()
     
     if argn.lang is None:
         parser.print_usage()
