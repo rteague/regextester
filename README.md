@@ -64,7 +64,7 @@ For multiple flags:
 --flags="I|S"
 ```
 
-If you expect a lot of output from matches pipe to `less` with the `-R` option:
+If you expect a lot of output from matches, pipe to `less` with the `-R` option:
 ```bash
 echo "abcd" | regext -l py -f I -e '(a(b)c)d' | less -R
 ```
