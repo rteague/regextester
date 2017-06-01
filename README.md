@@ -44,7 +44,7 @@ Group[1] = abc
 Group[2] = b
 ```
 
-The default -l/--lang option is pcre, you could specify python's regex like so:
+The default -l/--lang option is `pcre`, you could specify python's regex like so:
 ```bash
 echo "abcd" | regext -l py -e '(a(b)c)d'
 ```
@@ -62,6 +62,11 @@ For a single flag:
 For multiple flags:
 ```bash
 --flags="I|S"
+```
+
+If you expect a lot of output from matches pipe to `less` with the `-R` option:
+```bash
+echo "abcd" | regext -l py -f I -e '(a(b)c)d' | less -R
 ```
 
 
