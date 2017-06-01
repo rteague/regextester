@@ -2,6 +2,12 @@
 
 A CLI tool for testing regular expressions (regex) using various regex languages.
 
+**Table of Contents**
+
+* [Installation/Setup](#installationsetup)
+  * [Requirements](#requirements)
+* [Usage and Examples](#usage-and-examples)
+
 ## Installation/Setup
 
 ### Requirements
