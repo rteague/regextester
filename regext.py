@@ -17,7 +17,7 @@ class RegexTester(object):
     def test(self):
         if self.lang == 'pcre':
             return self.pcre()
-        if self.lang == 'python':
+        if self.lang == 'python' or self.lang == 'py':
             return self.python()
     def pcre(self):
         print 'pcre'
@@ -27,18 +27,19 @@ class RegexTester(object):
         matches = re.findall(self.expression, self.teststr, eval(flags))
         matches_len = len(matches)
         if matches_len == 0:
-            print "Match failed!"
+            print "\033[1;31mMatch failed!\033[m"
             return False
-        print "Match successful! matches and their groups:"
+        print "\033[1;32mMatch successful! %d matches found:\033[m" % matches_len
         for matchno, match in enumerate(matches):
             matchno = matchno + 1
-            print 'Match number %d:' % matchno
+            group_len = 1 if type(match) == str else len(match)
+            print 'Match number %d (%d group(s)):' % (matchno, group_len)
             if type(match) == str:
-                print 'Full match, Group[1] = \'%s\'' % match
+                print 'Group[1] = \'%s\'' % match
             else:
                 for groupno, group in enumerate(match):
                     if groupno == 0:
-                        print 'Full match, Group[%s] = \'%s\'' % (groupno + 1, group)
+                        print 'Group[%s] = \'%s\'' % (groupno + 1, group)
                     else:
                         print 'Group[%s] = \'%s\'' % (groupno + 1, group)
         return True
@@ -56,7 +57,14 @@ def main():
     parser.add_argument('files', nargs = '*')
     parser.parse_args(namespace = argn)
     # process
+    # take stdin or look for files in the cli arguments--after the --expression arg
     data = raw_input() if len(argn.files) == 0 else self.files 
+    
+    if argn.lang is None:
+        parser.print_usage()
+        print '%s: error: argument -l/-lang: expects 1 argument' % __file__
+        sys.exit(1)
+    
     reg = RegexTester(argn.lang, argn.flags, argn.expression[0], data)
     reg.test()
 
