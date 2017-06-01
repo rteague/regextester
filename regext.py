@@ -6,7 +6,7 @@
 # Tue May 30 2017
 ## 
 
-import re, sys, argparse
+import re, copy, sys, argparse
 
 class RegexTester(object):
     def __init__(self, lang, flags, expression, teststr):
@@ -24,24 +24,18 @@ class RegexTester(object):
         return True
     def python(self):
         flags = re.sub('([a-z])', r"re.\1", self.flags, flags = re.I) if self.flags else self.flags
-        matches = re.findall(self.expression, self.teststr, eval(flags))
-        matches_len = len(matches)
-        if matches_len == 0:
+        matches = re.finditer(self.expression, self.teststr, eval(flags))
+        if matches is None:
             print "\033[1;31mMatch failed!\033[m"
             return False
-        print "\033[1;32mMatch successful! %d matches found:\033[m" % matches_len
+        print "\033[1;32mMatch successful!\033[m"
         for matchno, match in enumerate(matches):
-            matchno = matchno + 1
-            group_len = 1 if type(match) == str else len(match)
-            print 'Match number %d (%d group(s)):' % (matchno, group_len)
-            if type(match) == str:
-                print 'Group[1] = \'%s\'' % match
-            else:
-                for groupno, group in enumerate(match):
-                    if groupno == 0:
-                        print 'Group[%s] = \'%s\'' % (groupno + 1, group)
-                    else:
-                        print 'Group[%s] = \'%s\'' % (groupno + 1, group)
+            group_len = len(match.groups())
+            print 'Match number %d, with %d group(s):' % (matchno + 1, group_len)
+            print 'Full Match = \'%s\'' % match.group()
+            for groupno in xrange(0, group_len):
+                groupno = groupno + 1
+                print 'Group[%s] = \'%s\'' % (groupno, match.group(groupno))
         return True
 
 def main():
