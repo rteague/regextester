@@ -21,6 +21,12 @@ class RegexTester(object):
             return self.python()
         return False
     def pcre(self):
+        # append the 'g' (global) flag, if not found
+        flag_pos = self.expression.rfind('/')
+        flags = self.expression[flag_pos:len(self.expression)]
+        if 'g' not in flags:
+            self.expression = '%sg' % self.expression
+
         perl_code = """
 my $text = "%s";
 my $matches_found = 0; # boolean
