@@ -56,8 +56,8 @@ echo "abcd" | regext -l py -e '(a(b)c)d'
 ```
 
 List of all available regex languages you can run tests with:
-* pcre (default) (synonyms: perl, php) 
-* python (synonyms: py)
+* pcre (default) (synonym(s): perl) 
+* python (synonym(s): py)
 
 To use python's regex flags use the -f/--flags option after the --lang specification.
 

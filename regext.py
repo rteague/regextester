@@ -15,18 +15,21 @@ class RegexTester(object):
         self.flags = flags # for python
         self.lang = lang
     def test(self):
-        if re.match('pcre|perl|php', self.lang):
+        if re.match('pcre|perl', self.lang):
             return self.pcre()
         if self.lang == 'python' or self.lang == 'py':
             return self.python()
         return False
     def pcre(self):
         # append the 'g' (global) flag, if not found
-        flag_pos = self.expression.rfind('/')
-        flags = self.expression[flag_pos:len(self.expression)]
+        flag_regex = re.compile('[^a-z]([a-z]+)$', re.I)
+        flag_match = flag_regex.match(self.expression)
+        flags = ''
+        if flag_match:
+            flags = flag_match.group(1)
         if 'g' not in flags:
             self.expression = '%sg' % self.expression
-
+        
         perl_code = """
 my $text = "%s";
 my $matches_found = 0; # boolean
