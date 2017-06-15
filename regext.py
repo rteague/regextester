@@ -14,13 +14,29 @@ class RegexTester(object):
         self.teststr = teststr
         self.flags = flags # for python
         self.lang = lang
+    
     def test(self):
-        if re.match('pcre|perl', self.lang):
+        if re.match('pcre|php', self.lang):
             return self.pcre()
+        if self.lang == 'perl' or self.lang == 'pl':
+            return self.perl()
         if self.lang == 'python' or self.lang == 'py':
             return self.python()
         return False
+    
     def pcre(self):
+        if os.system('bash -c "if command -v php > /dev/null 2>&1; then exit 0; else exit 1; fi"') != 0:
+            return False
+        php_code = """
+preg_match_all('%s', '%s', $matches, PREG_SET_ORDER);
+$matches_size = sizeof($matches);
+for ($i = 0; $i < $matches_size; $i++) {
+    
+}
+"""
+        return True
+
+    def perl(self):
         # append the 'g' (global) flag, if not found
         flag_regex = re.compile('[^a-z]([a-z]+)$', re.I)
         flag_match = flag_regex.match(self.expression)
@@ -54,6 +70,7 @@ if (!$matches_found) {
         if os.system("perl -E '%s'" %  perl_code) != 0:
             return False
         return True
+    
     def python(self):
         flags = re.sub('([a-z])', r"re.\1", self.flags, flags = re.I) if self.flags else self.flags
         matches = re.finditer(self.expression, self.teststr, eval(flags))
