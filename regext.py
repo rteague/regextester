@@ -28,12 +28,22 @@ class RegexTester(object):
         if os.system('bash -c "if command -v php > /dev/null 2>&1; then exit 0; else exit 1; fi"') != 0:
             return False
         php_code = """
-preg_match_all('%s', '%s', $matches, PREG_SET_ORDER);
+$res = preg_match_all("%s", "%s", $matches, PREG_SET_ORDER);
 $matches_size = sizeof($matches);
-for ($i = 0; $i < $matches_size; $i++) {
-    
+if ($res) {
+    echo "\033[1;32mMatch Successful!\033[m\\n";
 }
-"""
+for ($i = 0; $i < $matches_size; $i++) {
+    $group_size = sizeof($matches[$i]) - 1;
+    printf("\033[1mMatch number %%d, with %%d group(s):\033[m\n", $i+1, $group_size);
+    printf("Full Match = '%%s'\n", $matches[$i][0]);
+    for ($j = 0; $j < $group_size; $j++) {
+        printf("Group[%%d] = '%%s'\n", $j+1, $matches[$i][$j]);
+    }
+}
+""" % (self.expression, self.teststr)
+        if os.system("php -r '%s'" % php_code) != 0:
+            return False
         return True
 
     def perl(self):
