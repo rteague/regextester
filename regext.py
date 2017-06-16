@@ -14,13 +14,39 @@ class RegexTester(object):
         self.teststr = teststr
         self.flags = flags # for python
         self.lang = lang
+    
     def test(self):
-        if re.match('pcre|perl', self.lang):
+        if re.match('pcre|php', self.lang):
             return self.pcre()
+        if self.lang == 'perl' or self.lang == 'pl':
+            return self.perl()
         if self.lang == 'python' or self.lang == 'py':
             return self.python()
         return False
+    
     def pcre(self):
+        if os.system('bash -c "if command -v php > /dev/null 2>&1; then exit 0; else exit 1; fi"') != 0:
+            return False
+        php_code = """
+$res = preg_match_all("%s", "%s", $matches, PREG_SET_ORDER);
+$matches_size = sizeof($matches);
+if ($res) {
+    echo "\033[1;32mMatch Successful!\033[m\\n";
+}
+for ($i = 0; $i < $matches_size; $i++) {
+    $group_size = sizeof($matches[$i]) - 1;
+    printf("\033[1mMatch number %%d, with %%d group(s):\033[m\n", $i+1, $group_size);
+    printf("Full Match = '%%s'\n", $matches[$i][0]);
+    for ($j = 0; $j < $group_size; $j++) {
+        printf("Group[%%d] = '%%s'\n", $j+1, $matches[$i][$j]);
+    }
+}
+""" % (self.expression, self.teststr)
+        if os.system("php -r '%s'" % php_code) != 0:
+            return False
+        return True
+
+    def perl(self):
         # append the 'g' (global) flag, if not found
         flag_regex = re.compile('[^a-z]([a-z]+)$', re.I)
         flag_match = flag_regex.match(self.expression)
@@ -54,6 +80,7 @@ if (!$matches_found) {
         if os.system("perl -E '%s'" %  perl_code) != 0:
             return False
         return True
+    
     def python(self):
         flags = re.sub('([a-z])', r"re.\1", self.flags, flags = re.I) if self.flags else self.flags
         matches = re.finditer(self.expression, self.teststr, eval(flags))
