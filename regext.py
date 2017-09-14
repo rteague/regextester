@@ -32,14 +32,16 @@ $res = preg_match_all("%s", "%s", $matches, PREG_SET_ORDER);
 $matches_size = sizeof($matches);
 if ($res) {
     echo "\033[1;32mMatch Successful!\033[m\\n";
-}
-for ($i = 0; $i < $matches_size; $i++) {
-    $group_size = sizeof($matches[$i]) - 1;
-    printf("\033[1mMatch number %%d, with %%d group(s):\033[m\n", $i+1, $group_size);
-    printf("Full Match = '%%s'\n", $matches[$i][0]);
-    for ($j = 0; $j < $group_size; $j++) {
-        printf("Group[%%d] = '%%s'\n", $j+1, $matches[$i][$j]);
+    for ($i = 0; $i < $matches_size; $i++) {
+        $group_size = sizeof($matches[$i]) - 1;
+        printf("\033[1mMatch number %%d, with %%d group(s):\033[m\n", $i+1, $group_size);
+        printf("Full Match = '%%s'\n", $matches[$i][0]);
+        for ($j = 0; $j < $group_size; $j++) {
+            printf("Group[%%d] = '%%s'\n", $j+1, $matches[$i][$j]);
+        }
     }
+} else {
+   echo "\033[1;31mMatch failed!\033[m\n"; 
 }
 """ % (self.expression, self.teststr)
         if os.system("php -r '%s'" % php_code) != 0:
@@ -108,7 +110,7 @@ def main():
         epilog = 'by Rashaud Teague'
     )
     parser.add_argument('-l', '--lang', nargs = '?', default = 'pcre')
-    parser.add_argument('-f', '--flags', nargs = '?', default = '0', help = '-f I or --flags="I|S|U"')
+    parser.add_argument('-f', '--flags', nargs = '?', default = '0', help = 'for python, -f I or --flags="I|S|U"')
     parser.add_argument('-e', '--expression', nargs = 1, type = str, required = True)
     parser.parse_args(namespace = argn)
     # process
