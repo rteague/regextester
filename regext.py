@@ -8,6 +8,9 @@
 
 import re, os, sys, argparse
 
+EXIT_FAILURE = 1
+EXIT_SUCCESS = 2
+
 class RegexTester(object):
     def __init__(self, lang, flags, expression, teststr):
         self.expression = expression
@@ -109,6 +112,7 @@ def main():
         description = 'A CLI tool for testing regular expressions (regex) using various regex languages.',
         epilog = 'by Rashaud Teague'
     )
+    parser.add_argument('--color', nargs = '?', default = 'always') # never, always, auto
     parser.add_argument('-l', '--lang', nargs = '?', default = 'pcre')
     parser.add_argument('-f', '--flags', nargs = '?', default = '0', help = 'for python, -f I or --flags="I|S|U"')
     parser.add_argument('-e', '--expression', nargs = 1, type = str, required = True)
@@ -117,6 +121,11 @@ def main():
     # read from stdin
     data = raw_input()
     
+    if argn.color not in ['never', 'always', 'auto']:
+        parser.print_usage()
+        print '%s: error: "%s" invalid value for --color' % (__file__, argn.color)
+        sys.exit(EXIT_FAILURE)
+
     if argn.lang is None:
         parser.print_usage()
         print '%s: error: argument -l/-lang: expects 1 argument' % __file__
