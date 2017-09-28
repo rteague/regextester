@@ -9,7 +9,11 @@
 import re, os, sys, argparse
 
 EXIT_FAILURE = 1
-EXIT_SUCCESS = 2
+EXIT_SUCCESS = 0
+
+def colortext(text, color):
+    escape = "\033"
+    return '%s[%s%s%s[m' % (escape, color, text, escape)
 
 class RegexTester(object):
     def __init__(self, lang, flags, expression, teststr):
@@ -129,11 +133,11 @@ def main():
     if argn.lang is None:
         parser.print_usage()
         print '%s: error: argument -l/-lang: expects 1 argument' % __file__
-        sys.exit(1)
+        sys.exit(EXIT_FAILURE)
     
     reg = RegexTester(argn.lang, argn.flags, argn.expression[0], data)
     if not reg.test():
-        sys.exit(1)
+        sys.exit(EXIT_FAILURE)
 
 if __name__ == "__main__":
     main()
