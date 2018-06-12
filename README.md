@@ -39,7 +39,7 @@ regext --help
 
 Example 1:
 ```bash
-echo "abcd" | regext -e '/(a(b)c)d/g'
+echo "abcd" | regext -e '/(a(b)c)d/'
 ```
 Example 1 output:
 ```bash
